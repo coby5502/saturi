@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import { Grommet, Box, Heading, Button, Paragraph, Text } from 'grommet';
 import axios from "axios";
 
 const App = () => {
@@ -101,12 +102,44 @@ const App = () => {
   }, [audioUrl]);
 
   return (
-    <>
-      <button onClick={onRec ? onRecAudio : offRecAudio}>녹음</button>
-      <button onClick={onSubmitAudioFile}>결과 확인</button>
-      <h1>{audioText}</h1>
-    </>
+    <Grommet theme={theme}>
+      <Box align="center">
+        <Box gap="medium" alignSelf="center" width="large" pad="medium">
+          <Heading>Saturi</Heading>
+          <ColorBox background="dark-1">
+            <Text color="my-text-color">My Text Color</Text>
+          </ColorBox>
+          <ColorBox background="light-1">
+            <Text color="my-text-color">My Text Color</Text>
+          </ColorBox>
+          <Button onClick={onRec ? onRecAudio : offRecAudio} label="녹음" />
+          <Button onClick={onSubmitAudioFile} label="결과 확인" />
+        </Box>
+      </Box>
+    </Grommet>
   );
+};
+
+const ColorBox = props => (
+  <Box
+    direction="row"
+    margin="small"
+    round="small"
+    pad="small"
+    align="start"
+    gap="small"
+    {...props}
+  />
+);
+
+const theme = {
+  global: {
+    font: {
+      family: 'Roboto',
+      size: '18px',
+      height: '20px',
+    },
+  },
 };
 
 export default App;

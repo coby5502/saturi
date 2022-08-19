@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Grommet, Box, Heading, Button, Paragraph, Text } from 'grommet';
+import { Grommet, Box, Heading, Button, Text } from 'grommet';
 import axios from "axios";
 
 const App = () => {
@@ -81,19 +81,20 @@ const App = () => {
     }
     // // File 생성자를 사용해 파일로 변환
     // const sound = new File([audioUrl], "file.wav", { lastModified: new Date().getTime(), type: "wav" });
-    // console.log(sound); // File 정보 출력
-
+    // console.log(sound); // File 정보 출력ta = await response.json();
+    
     let url = 'http://3.34.91.183:8000/file_upload'
     let sound = new FormData()
-    
+
     sound.append('file', {
       audioUrl,
       type: 'wav',
       name: 'file.wav'
     })
 
-    axios.post(url, {"body": sound}, {
+    axios.post(url, { body: sound }, {
       headers: {
+        'Access-Control-Allow-Origin': '*',
         'Content-Type': 'multipart/form-data'
       }
     }).then((response) => {

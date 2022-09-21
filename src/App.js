@@ -1,6 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { Grommet, Box, Heading, Button, Text } from 'grommet';
-import axios from "axios";
 
 const App = () => {
   const [stream, setStream] = useState();
@@ -9,7 +8,9 @@ const App = () => {
   const [source, setSource] = useState();
   const [analyser, setAnalyser] = useState();
   const [audioUrl, setAudioUrl] = useState();
-  const [audioText, setAudioText] = useState('');
+  
+  const [slang, setSlang] = useState("녹음 버튼을 눌러 사투리를 녹음해주세요.");
+  const [standard, setStandard] = useState("결과 확인 버튼을 누르면, 표준어로 번역됩니다.");
 
   const onRecAudio = () => {
     // 음원정보를 담은 노드를 생성하거나 음원을 실행또는 디코딩 시키는 일을 한다
@@ -17,6 +18,9 @@ const App = () => {
     // 자바스크립트를 통해 음원의 진행상태에 직접접근에 사용된다.
     const analyser = audioCtx.createScriptProcessor(0, 1, 1);
     setAnalyser(analyser);
+
+    setSlang("녹음 버튼을 눌러 사투리를 녹음해주세요.");
+    setStandard("결과 확인 버튼을 누르면, 표준어로 번역됩니다.");
 
     function makeSound(stream) {
       // 내 컴퓨터의 마이크나 다른 소스를 통해 발생한 오디오 스트림의 정보를 보여준다.
@@ -61,6 +65,8 @@ const App = () => {
     media.ondataavailable = function (e) {
       setAudioUrl(e.data);
       setOnRec(true);
+
+      onSubmitAudioFile()
     };
 
     // 모든 트랙에서 stop()을 호출해 오디오 스트림을 정지
@@ -75,32 +81,34 @@ const App = () => {
     source.disconnect();
   };
 
-  const onSubmitAudioFile = useCallback(() => {
-    if (audioUrl) {
-      console.log(URL.createObjectURL(audioUrl)); // 출력된 링크에서 녹음된 오디오 확인 가능
-    }
-    // // File 생성자를 사용해 파일로 변환
-    // const sound = new File([audioUrl], "file.wav", { lastModified: new Date().getTime(), type: "wav" });
-    // console.log(sound); // File 정보 출력ta = await response.json();
-    
-    let url = 'http://3.34.91.183:8000/file_upload'
-    let sound = new FormData()
+  const onSubmitAudioFile = () => {
+    const url = 'http://164.125.252.182:8009/file_upload'
+    const formData = new FormData()
 
-    sound.append('file', {
-      audioUrl,
+    formData.append('file', {
+      uri: audioUrl,
       type: 'wav',
       name: 'file.wav'
     })
 
-    axios.post(url, { body: sound }, {
+    const options = {
+      method: 'POST',
+      body: formData,
       headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'multipart/form-data'
-      }
-    }).then((response) => {
-      console.log(response)
-    })
-  }, [audioUrl]);
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        "Access-Control-Allow-Origin": "*"
+      },
+    };
+
+    fetch(url, options)
+      .then((response) => {
+        const data = response.json();
+        console.log(data)
+        setSlang(data.text)
+        setStandard(data.text2)
+      });
+  }
 
   return (
     <Grommet theme={theme}>
@@ -108,13 +116,12 @@ const App = () => {
         <Box gap="medium" alignSelf="center" width="large" pad="medium">
           <Heading>Saturi</Heading>
           <ColorBox background="dark-1">
-            <Text color="my-text-color">My Text Color</Text>
+            <Text color="my-text-color">{slang}</Text>
           </ColorBox>
           <ColorBox background="light-1">
-            <Text color="my-text-color">My Text Color</Text>
+            <Text color="my-text-color">{standard}</Text>
           </ColorBox>
-          <Button onClick={onRec ? onRecAudio : offRecAudio} label="녹음" />
-          <Button onClick={onSubmitAudioFile} label="결과 확인" />
+          <Button onClick={onRec ? onRecAudio : offRecAudio} label={onRec ? "녹음" : "중단"} />
         </Box>
       </Box>
     </Grommet>

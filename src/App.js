@@ -7,9 +7,16 @@ const App = () => {
   const [standard, setStandard] = useState("번역하기 버튼을 누르면, 표준어로 번역됩니다.");
 
   const getStandard = () => {
-    const url = 'http://164.125.252.182:8009/text_only_test/' + slang
+    const url = 'http://localhost:8009/text_only_test/' + slang
 
-    fetch(url)
+    fetch(url, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        "Access-Control-Allow-Origin": "*"
+      },
+    })
       .then((response) => {
         const data = response.json();
         setStandard(data.text2)

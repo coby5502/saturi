@@ -8,6 +8,7 @@ const App = () => {
 
   const getStandard = () => {
     const url = 'http://localhost:8009/text_only_test/' + slang
+    setStandard("번역 중입니다. 잠시만 기다려주세요.")
 
     fetch(url, {
       method: 'GET',
@@ -17,8 +18,9 @@ const App = () => {
         "Access-Control-Allow-Origin": "*"
       },
     })
-      .then((response) => {
-        const data = response.json();
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.text2);
         setStandard(data.text2)
       });
   }

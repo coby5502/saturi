@@ -7,7 +7,9 @@ const App = () => {
   const [standard, setStandard] = useState("번역하기 버튼을 누르면, 표준어로 번역됩니다.");
 
   const getStandard = () => {
-    const url = 'http://164.125.252.182:8009/text_only_test/' + slang
+    const now = window.location.href;
+    const now_url = now.split(':')[1];
+    const url = 'http:' + now_url + ':8009/text_only_test/' + slang
     setStandard("번역 중입니다. 잠시만 기다려주세요.")
 
     fetch(url, {
